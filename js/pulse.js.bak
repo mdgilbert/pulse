@@ -1,0 +1,235 @@
+
+$(document).ready(function(e) {
+
+  $('body').pulse({
+    style: 'test',
+  });
+
+});
+
+// Type safe declaration
+(function( window, $, undefined ) {
+
+  'use strict';
+
+  $.Pulse = function( options, element ) {
+    this.element = $( element );
+    this._create( options );
+    this._init();
+  };
+
+  /**** Global variables ****/
+  var projects = [];
+  // etc etc
+  /**** End global variables ****/
+
+  /**** Helper functions ****/
+  // Helper string functions
+  if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function (str){
+      return this.slice(0, str.length) == str;
+    };
+  }
+  if (typeof String.prototype.endsWith != 'function') {
+    String.prototype.endsWith = function (str){
+      return this.slice(-str.length) == str;
+    };
+  }
+  if (typeof String.prototype.capitalize != 'function') {
+    String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    };
+  }
+  // End helper string functions
+  // Helper cookie functions
+  var createCookie = function(name,value,days) {
+    var expires = '';
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      expires = "; expires="+date.toGMTString();
+    } else {
+      expires = "";
+    }
+    // If we're loading from a local file, set cookie using $.data
+    if (window.location.hostname == '') {
+      var cs = $('body').data('cookie');
+      var c = name + "=" + value + expires + "; path=/;";
+      $('body').data('cookie', cs ? cs + c : c);
+    } else {
+      document.cookie = name+"="+value+expires+"; path=/";
+    }
+  };
+  var readCookie = function(name) {
+    var nameEQ = name + "=";
+    var ca = '';
+    // If we're loading from a local file, get cookie using $.data
+    if (window.location.hostname == '') {
+      var cs = $('body').data('cookie');
+      if (typeof(cs) != 'undefined') {
+        ca = cs.split(';');
+      }
+    } else {
+      ca = document.cookie.split(';');
+    }
+    for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  };
+  var eraseCookie = function(name) {
+    createCookie(name,"",-1);
+  }
+  // End helper cookie functions
+  // URL parsing helpers
+  var getUrlVars = function() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+      vars[key] = value;
+    });
+    return vars;
+  };
+  // End url parsing helpers
+  /**** End helper functions ****/
+
+  $.Pulse.settings = {
+    style: 'test',
+    title: 'Wikipedia Pulse',
+  };
+
+  /**** Prototype object ****/
+  $.Pulse.prototype = {
+    // Init is triggered when instance is created
+    _init : function ( callback ) {
+      this.iFunc = 'PulseInit';
+    },
+    // Sets up the widget
+    _create : function( options ) {
+      this.options = $.extend( true, {}, $.Pulse.settings, options );
+      var instance = this;
+
+      // Check url vars, if no project is given fetch active projects
+      var url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      var vars = getUrlVars();
+      if (typeof(vars.p) == 'undefined') {
+        var page = typeof(vars.page) == 'undefined' ? 1 : vars.page;
+        var request = url + "?a=utility_getActiveProjects&page=" + page;
+        $.getJSON(request, function(data) {
+          if (data.errorstatus == 'fail') {
+            console.log("Failed to fetch projects: " + data.message);
+          } else {
+            // Create divs for each of the projects
+            var $container = $('#main_projects');
+            for (var i in data) {
+              if (typeof(data[i].p_id) == 'undefined') { continue; }
+              var proj = document.createElement("div");
+              proj.id = data[i].p_id;
+              $(proj).addClass('pulse_activeProject');
+
+              // Insert image into div (stub div for now)
+              // Target width for image is 304px (TODO: or a multiple of that up to * 3)
+              //var width = Math.floor(Math.random()*1000) + 100;
+              //var height = Math.floor(Math.random()*1000) + 100;
+              var width = data[i].width;
+              var height = data[i].height;
+              var scale = instance._scaleImage(width, height);
+              var img = document.createElement("div");
+              img.id = data[i].p_id + '_image_div';
+              $(img).addClass('pulse_activeProjectImage');
+              //$(img).css({'float': 'left', 'width': scale.width, 'height': scale.height, 'background-color': '#EEE'});
+              $(img).html("<img id='" + data[i].p_id + "_image' src='" + data[i].href + "' width='" + scale.width + "' height='" + scale.height + "' />");
+              $(proj).prepend(img);
+
+              // Insert project details into div
+              $(proj).append("<div style='clear: left;'></div><div class='pulse_activeProjectDetails'>" + data[i].p_aka + "</div>");
+              $(proj).append("<div class='pulse_activeProjectEditsNumber'>" + data[i].count + "</div>");
+              $(proj).append("<div class='pulse_activeProjectEdits'>Edits</div>");
+              $container.append(proj);
+            }
+            $container.imagesLoaded( function() {
+              $container.masonry({
+                itemSelector : '.pulse_activeProject',
+                isAnimated: true,
+                gutterWidth: 1,
+                isFitWidth: false, // don't center
+              });
+            });
+            $container.infinitescroll({
+              navSelector:  '#page-nav',            // selector for the paged navigation
+              nextSelector: '#page-nav a',          // selector for the NEXT link (to page 2)
+              itemSelector: '.pulse_activeProject', // selector for all items you'll retrieve
+              debug: true,
+              loading: {
+                  finishedMsg: 'No more pages to load.',
+                  img: 'http://i.imgur.com/6RMhx.gif',
+                  msgText: 'Loading the next group of WikiProjects...',
+                }
+              },
+              // trigger Masonry as a callback
+              function( newElements ) {
+                // hide new items while they are loading
+                var $newElems = $( newElements ).css({ opacity: 0 });
+                // ensure that images load before adding to masonry layout
+                $newElems.imagesLoaded(function(){
+                  // show elems now they're ready
+                  $newElems.animate({ opacity: 1 });
+                  $container.masonry( 'appended', $newElems, true );
+                });
+              }
+            );
+          }
+        });
+      }
+    },
+    // Updates to this should also be made to the PHP utility_scaleImage function
+    _scaleImage : function(width, height) {
+      var mult = 0; var col = 1;
+      mult = 304/width;
+      // We'll want to scale image so width is 304px, or a multiple of that up to * 3
+/*
+      if (width < 456) {
+        // Target width: 304
+        mult = 304 / width;
+      //} else if (width >= 456 && width < 760) {
+      } else { 
+        // Target width: 608
+        mult = 608 / width;
+        col = 2;
+      } /* else {
+        // Target width: 912
+        mult = 912 / width;
+      }*/
+      return { 'width': parseInt(width * mult), 'height': parseInt(height * mult), 'col': col };
+    },
+  };
+  /**** End pulse prototype object ****/
+
+  $.fn.pulse = function( options ) {
+    if ( typeof options === 'string' ) {
+      var args = Array.prototype.slice.call( arguments, 1 );
+      this.each(function() {
+        var instance = $.data( this, 'pulse' );
+        if (!instance ) {
+          logError( "cannot call methods on reflex prior to initialization.  Attempted to call method '" + options);
+          return;
+        }
+        // apply method
+        instance[ options ].apply( instance, args );
+      });
+    } else {
+      this.each(function() {
+        var instance = $.data( this, 'pulse' );
+        if ( instance ) {
+          instance.option( options || {} );
+          instance._init();
+        } else {
+          $.data( this, 'pulse', new $.Pulse( options, this ) );
+        }
+      });
+    }
+  };
+
+})( window, jQuery);
+

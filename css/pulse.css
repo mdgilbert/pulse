@@ -1,0 +1,200 @@
+
+html {
+
+}
+body {
+  padding: 10px;
+  background-color: #000;
+  color: #CCC;
+}
+
+a:link { color: #F2A15C; text-decoration: none; }
+a:visited { color: #A7540D; text-decoration: none; }
+a:hover { color: #F2A15C; text-decoration: none; }
+a:active { color: #F2A15C; text-decoration: none; }
+
+/* Title bar styles */
+.title_bar {
+}
+.title_ellipsis {
+  display: inline;
+  letter-spacing:5px;
+  font-size: 2.8em;
+  padding: 0px 5px;
+}
+.title_logo {
+  display: inline;
+}
+.title_name {
+  display: inline;
+  font-size: 2.3em;
+  color: #0DFBB0;
+  padding-right: 5px;
+}
+/* Nav bar styles */
+.navbar {
+  padding-top: 20px;
+}
+.nav_link {
+  color: #CCC !important;
+  font-size: 1.6em;
+}
+.nav_link_inner {
+  font-variant: small-caps;
+  color: #CCC !important;
+  font-size: 1.4em;
+}
+/* Main content pane styles */
+.content {
+  padding-top: 150px;
+  width: 75%;
+}
+.main_desc {
+  font-size: 2.1em;
+  text-align: center;
+  width: 60%;
+  padding-left: 10%;
+  line-height: 125%;
+}
+#main_projects {
+  /* margin: 0 auto; */
+  width: 1050px;
+}
+.pulse_activeProject {
+  /* min-width: 50px; */
+  margin: 5px;
+  padding: 5px;
+  border: 1px #CCC solid;
+  float: left;
+  cursor: pointer;
+}
+.pulse_activeProjectImage {
+  margin: 5px 7px;
+}
+.pulse_activeProjectDetails {
+  float: left;
+  font-size: 24px;
+  font-family: Trebuchet MS;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 194px;
+}
+.pulse_activeProjectEdits {
+  float: right;
+  font-size: 12px;
+  font-family: Helvetica;
+}
+.pulse_activeProjectEditsNumber {
+  float: right;
+  font-size: 34px;
+  font-family: Helvetica;
+}
+.pulse_voteProject {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 85px;
+  height: 27px;
+  padding: 3px 0px 3px 10px;
+  background-color: #CCC;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  border-radius: 10px;
+  opacity: 0.5;
+  filter:alpha(opacity=50); /* For IE8 and earlier */
+}
+.pulse_descProject {
+  position: absolute;
+  bottom: 27px;
+  left: 12px;
+  width: 284px; /* Total image width is 304px, width of description = 304 - 20 (for padding) */
+  height: 65px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, .8);
+  /* text-overflow: ellipsis; */
+}
+.pulse_fullDescProject {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  width: 100px;
+  height: 25px;
+  padding-left: 10px;
+  margin-left: -50px;
+  background-color: rgba(255, 255, 255, .8);
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: #000;
+  text-align: center;
+  font-size: 1.8em;
+  letter-spacing: 10px;
+}
+.pulse_descLinks {
+  text-align: center;
+  margin: 5px 0px;
+}
+.pulse_descLink {
+  display: inline;
+  border: 1px solid #000;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 3px;
+  margin: 3px;
+}
+.desc_title {
+  font-size: 1.2em;
+  color: #000;
+  display: inline;
+}
+.desc_text {
+  font-size: 0.9em;
+  color: #000;
+  padding-left: 10px;
+  font-style: italic;
+  display: inline;
+}
+.pulse_voted {
+  background-color: rgba(255, 240, 0, .6);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+}
+.pulse_loadingImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+  background: #000 url('http://i.imgur.com/6RMhx.gif') no-repeat center;
+  opacity: 0.5;
+  filter:alpha(opacity=50); /* For IE8 and earlier */
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  border-radius: 10px;
+}
+#infscr-loading {
+  position: fixed;
+  text-align: center;
+  z-index: 100;
+  padding: 10px;
+  width: 200px;
+  left: 350px;
+  bottom: 40px;
+  background: black;
+  opacity: 0.8;
+  color: white;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
