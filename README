@@ -1,0 +1,29 @@
+
+### To install
+
+To clone the Pulse, open a terminal and type
+
+  * git clone https://github.com/mdgilbert/pulse
+
+This will create a new directory, 'pulse', in your current directory and copy
+all files into that directory.  You're now ready to start coding!
+
+### To setup
+
+Once you have the project files, you'll still need to setup the database 
+credentials.  To do this, create a new file called .my.wikiproj.cnf in 
+the pulse directory.  That file should have the following contents:
+
+[client]
+uw_host = <db host>
+uw_port = <db port>
+uw_user = <db user>
+uw_password = <db password>
+
+If you need access to the DB, contact the project owner.
+
+### To view
+
+Just point your web server to serve from the pulse directory, and visit the local
+URL, probably something like http://localhost/pulse.
+
